@@ -9,8 +9,6 @@ This project is a practical microservices reference example for demonstrating th
 -   [Reference Example Overview](#reference-example-overview)
 -   [Architecture](#architecture)
     -   [Microservice Specifications](#microservice-specifications)
-    -   -   [Architecture](#architecture)
-    -   -   [Component-based Architecture](#component-based-architecture)
 -   [Docker and Kubernetes](#deploying-to-kubernetes-with-docker-stacks)
 -   [Installation](#installation)
     -   [Pre-requisites](#pre-requisites)
@@ -43,14 +41,6 @@ For this example, I've chosen to build a social network using microservices. A s
 In the architecture diagram below, you'll see a component diagram that describes an event-driven microservices architecture that contains two domain services and one aggregate service (a read-only projection of replicated domain data provided as a service).
 
 <img src="https://imgur.com/DUEhtBH.png" width="480" alt="Event sourcing architecture diagram">
-<br/>
-
-### Component-based Architecture
-
-The diagram below is a more comprehensive view of the actual architecture, demonstrating the end-to-end reactive flows from the API gateway to the domain services to the database.
-
-<img src="https://imgur.com/vEkKuJz.png" width="700" alt="Component-based architecture">
-<br/>
 
 ### Microservice Specifications
 
@@ -63,8 +53,6 @@ With this approach, we can get the best of both worlds—the large shared databa
 | _[Friend](https://github.com/kbastani/event-sourcing-microservices-example/tree/master/friend-service)_                 | [2.1.1.RELEASE](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/) | [Greenwich.RC1](https://cloud.spring.io/spring-cloud-static/Greenwich.RC1/single/spring-cloud.html) | [R2DBC](https://docs.spring.io/spring-data/r2dbc/docs/1.0.0.M1/reference/html/)          | [Apache Kafka](https://kafka.apache.org/) | [Domain](#domain-services)       |
 | _[User](https://github.com/kbastani/event-sourcing-microservices-example/tree/master/user-service)_                     | [2.1.1.RELEASE](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/) | [Greenwich.RC1](https://cloud.spring.io/spring-cloud-static/Greenwich.RC1/single/spring-cloud.html) | [R2DBC](https://docs.spring.io/spring-data/r2dbc/docs/1.0.0.M1/reference/html/)          | [Apache Kafka](https://kafka.apache.org/) | [Domain](#domain-services)       |
 | _[Recommendation](https://github.com/kbastani/event-sourcing-microservices-example/tree/master/recommendation-service)_ | [2.1.1.RELEASE](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/) | [Greenwich.RC1](https://cloud.spring.io/spring-cloud-static/Greenwich.RC1/single/spring-cloud.html) | [Neo4j OGM](https://docs.spring.io/spring-data/neo4j/docs/5.1.3.RELEASE/reference/html/) | [Apache Kafka](https://kafka.apache.org/) | [Aggregate](#aggregate-services) |
-| _[Discovery](https://github.com/kbastani/event-sourcing-microservices-example/tree/master/discovery-service)_           | [2.1.1.RELEASE](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/) | [Greenwich.RC1](https://cloud.spring.io/spring-cloud-static/Greenwich.RC1/single/spring-cloud.html) | [N/A](https://docs.spring.io/spring-data/neo4j/docs/5.1.3.RELEASE/reference/html/)       | [N/A](https://kafka.apache.org/)          | _Netflix Eureka_                 |
-| _[Gateway](https://github.com/kbastani/event-sourcing-microservices-example/tree/master/edge-service)_                  | [2.1.1.RELEASE](https://docs.spring.io/spring-boot/docs/2.1.1.RELEASE/reference/htmlsingle/) | [Greenwich.RC1](https://cloud.spring.io/spring-cloud-static/Greenwich.RC1/single/spring-cloud.html) | [N/A](https://docs.spring.io/spring-data/neo4j/docs/5.1.3.RELEASE/reference/html/)       | [N/A](https://kafka.apache.org/)          | _Spring Cloud Gateway_           |
 
 ## Deploying to Kubernetes with Docker Stacks
 
@@ -174,17 +162,21 @@ sed -i '' -e 's/kbastani/'$username'/g' \
     ./deployment/docker/docker-compose-build.yml
 ```
 
-_The final command replaces my name in each pom.xml file that is used for building the container images._
-
-```bash
-sed -i '' -e 's/kbastani/'$username'/g' \
-    ./pom.xml
-```
-
 Now you're ready to build the project and your docker containers.
 
+If you have JDK and Maven on your workstation you should be able to simply run:
+
 ```bash
-mvn clean install -DskipTests
+mvn clean install -DskipTests -Ddocker.user=$username
+```
+
+If you do not have JDK and Maven on your workstation you may be able to use a maven Docker image to build your images:
+
+```bash
+docker run -it --rm --name my-maven-project \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v "$(pwd)":/src -w /src maven:3.6-jdk-11 \
+  mvn clean install -DskipTests -Ddocker.user=$username
 ```
 
 After everything has successfully been built, you are now ready to deploy the containers to your Docker Hub account. Run the following command.

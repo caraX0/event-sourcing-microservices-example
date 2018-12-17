@@ -8,8 +8,6 @@ services:
     image: kbastani/discovery-service:latest
     ports:
       - "8761:8761/tcp"
-    deploy:
-      replicas: 1
 
   edge-service:
     environment:
@@ -17,29 +15,21 @@ services:
     image: kbastani/edge-service:latest
     ports:
       - "9000:9000/tcp"
-    deploy:
-      replicas: 1
 
   friend-service:
     environment:
       SPRING_PROFILES_ACTIVE: docker
     image: kbastani/friend-service:latest
-    deploy:
-      replicas: 1
 
   user-service:
     environment:
       SPRING_PROFILES_ACTIVE: docker
     image: kbastani/user-service:latest
-    deploy:
-      replicas: 1
 
   recommendation-service:
     environment:
       SPRING_PROFILES_ACTIVE: docker
     image: kbastani/recommendation-service:latest
-    deploy:
-      replicas: 1
 
   kafka:
     environment:
@@ -50,8 +40,6 @@ services:
     image: confluentinc/cp-kafka:latest
     ports:
       - "29092:29092/tcp"
-    deploy:
-      replicas: 1
 
   zookeeper:
     environment:
@@ -60,26 +48,6 @@ services:
     image: confluentinc/cp-zookeeper:latest
     ports:
       - "32181:32181/tcp"
-    deploy:
-      replicas: 1
-
-  friend-db:
-    image: postgres:latest
-    environment:
-      POSTGRES_PASSWORD: example
-    ports:
-      - "5432/tcp"
-    deploy:
-      replicas: 1
-
-  user-db:
-    image: postgres:latest
-    environment:
-      POSTGRES_PASSWORD: example
-    ports:
-      - "5432/tcp"
-    deploy:
-      replicas: 1
 
   neo4j:
     environment:
@@ -88,5 +56,22 @@ services:
     ports:
       - "7474:7474/tcp"
       - "7687:7687/tcp"
-    deploy:
-      replicas: 1
+
+  friend-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - "5432/tcp"
+
+  user-db:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: example
+    ports:
+      - "5432/tcp"
+
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8080:9191"
