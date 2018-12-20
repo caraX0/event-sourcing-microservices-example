@@ -1,5 +1,5 @@
 spring:
-  profiles: default,development,test,docker,kubernetes
+  profiles: default,development,test,docker
   application:
     name: friend-service
 management:
